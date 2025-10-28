@@ -1,11 +1,17 @@
 "use client";
-import Link from "next/link";
-import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import React from "react";
+import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ThemeToogle } from "../../../components/ui/theme-toggle";
+import {
+  LoginLink,
+  LogoutLink,
+  RegisterLink,
+  useKindeBrowserClient,
+} from "@kinde-oss/kinde-auth-nextjs";
+import { Menu, X } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import React from "react";
+import { ThemeToogle } from "../../../components/ui/theme-toggle";
 
 const menuItems = [
   { name: "Features", href: "#link" },
@@ -17,6 +23,9 @@ const menuItems = [
 export const HeroHeader = () => {
   const [menuState, setMenuState] = React.useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
+  const { isAuthenticated, isLoading, getUser } = useKindeBrowserClient();
+  console.log(isAuthenticated);
+  const user = getUser();
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -94,37 +103,51 @@ export const HeroHeader = () => {
                   ))}
                 </ul>
               </div>
-              <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-                <ThemeToogle />
-                <Button
-                  asChild
-                  variant="outline"
-                  size="sm"
-                  className={cn(isScrolled && "lg:hidden")}
-                >
-                  <Link href="#">
-                    <span>Login</span>
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  size="sm"
-                  className={cn(isScrolled && "lg:hidden")}
-                >
-                  <Link href="#">
-                    <span>Sign Up</span>
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  size="sm"
-                  className={cn(isScrolled ? "lg:inline-flex" : "hidden")}
-                >
-                  <Link href="#">
-                    <span>Get Started</span>
-                  </Link>
-                </Button>
-              </div>
+              {isLoading ? null : (
+                <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
+                  <ThemeToogle />
+                  {user ? (
+                    <LogoutLink
+                      className={cn(
+                        buttonVariants({ size: "sm" }),
+                        isScrolled && "lg:hidden"
+                      )}
+                    >
+                      Logout
+                    </LogoutLink>
+                  ) : (
+                    <>
+                      {" "}
+                      <LoginLink
+                        className={cn(
+                          buttonVariants({ variant: "outline", size: "sm" }),
+                          isScrolled && "lg:hidden"
+                        )}
+                      >
+                        LogIn
+                      </LoginLink>
+                      <RegisterLink
+                        className={cn(
+                          buttonVariants({ size: "sm" }),
+                          isScrolled && "lg:hidden"
+                        )}
+                      >
+                        Sign Up
+                      </RegisterLink>
+                      <RegisterLink
+                        className={cn(
+                          buttonVariants({
+                            size: "sm",
+                          }),
+                          isScrolled ? "lg:inline-flex" : "hidden"
+                        )}
+                      >
+                        Get Started
+                      </RegisterLink>{" "}
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
