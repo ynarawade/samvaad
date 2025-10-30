@@ -1,7 +1,9 @@
+import "@/lib/orpc.server"; // pre rendering for ssr
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import { Providers } from "@/app/providers";
 import { AuthProvider } from "../components/ui/AuthProvider";
 import { ThemeProvider } from "../lib/theme-provider";
 
@@ -37,7 +39,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <Providers>{children}</Providers>
           </ThemeProvider>
         </body>
       </html>
