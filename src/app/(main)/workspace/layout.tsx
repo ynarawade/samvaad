@@ -19,9 +19,12 @@ async function WrokSpaceLayout({ children }: { children: ReactNode }) {
           <CreateWrokspaceBtn />
         </div>
         <div className="mt-auto">
-          <UserNav />
+          <HydrateClient client={queryClient}>
+            <UserNav />
+          </HydrateClient>
         </div>
       </div>
+      {children}
     </div>
   );
 }

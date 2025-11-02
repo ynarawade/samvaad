@@ -1,7 +1,8 @@
-import { workspaceList } from "@/app/router/workspace";
+import { createWorkspace, workspaceList } from "@/app/router/workspace";
 
 export const router = {
   workspace: {
     list: workspaceList,
+    create: createWorkspace,
   },
 };

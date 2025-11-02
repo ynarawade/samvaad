@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { Providers } from "@/app/providers";
+import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "../components/ui/AuthProvider";
 import { ThemeProvider } from "../lib/theme-provider";
 
@@ -40,6 +41,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Providers>{children}</Providers>
+            <Toaster closeButton />
           </ThemeProvider>
         </body>
       </html>

@@ -1,89 +1,108 @@
+"use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { getAvatar } from "@/lib/get-avatar";
+import { orpc } from "@/lib/orpc";
 import {
   LogoutLink,
   PortalLink,
 } from "@kinde-oss/kinde-auth-nextjs/components";
-import { BadgeCheck, CreditCard, LogOut } from "lucide-react";
-
-const user = {
-  picture: "https://github.com/shadcn.png",
-  given_name: "Yadnesh Narawade",
-  email: "yadnesh.narawade22@gmail.com",
-};
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { CreditCard, LogOut, Settings } from "lucide-react";
 
 function UserNav() {
+  const {
+    data: { user },
+  } = useSuspenseQuery(orpc.workspace.list.queryOptions());
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant={"outline"}
-          size={"icon"}
-          className="size-12 rounded-2xl hover:rounded-xl transition-all duration-300 bg-background/50 border-border/50 hover:bg-accent hover:text-accent-foreground"
+          variant="ghost"
+          size="icon"
+          className="size-12 rounded-2xl hover:rounded-xl transition-all duration-300 hover:bg-accent"
         >
-          <Avatar className="h-8 w-8 rounded-xl">
+          <Avatar className="size-10 rounded-xl">
             <AvatarImage
-              src={user.picture}
-              alt="User Image"
+              src={getAvatar(user.picture, user.email!)}
+              alt={user.given_name ?? "User"}
               className="object-cover"
             />
-            <AvatarFallback>
-              {user.given_name.slice(0, 2).toUpperCase()}
+            <AvatarFallback className="rounded-xl text-sm font-semibold">
+              {user.given_name?.slice(0, 2).toUpperCase() ?? "U"}
             </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
+
       <DropdownMenuContent
-        className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-2xl"
-        side={"right"}
+        className="w-64 rounded-xl"
+        side="right"
         align="end"
-        sideOffset={4}
+        sideOffset={12}
       >
-        <DropdownMenuLabel className="p-0 font-normal">
-          <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-            <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarImage src={user.picture} alt={user.given_name} />
-              <AvatarFallback className="rounded-lg">
-                {user.given_name.slice(0, 2).toUpperCase()}
+        <DropdownMenuLabel className="font-normal p-3">
+          <div className="flex items-center gap-3">
+            <Avatar className="size-10 rounded-lg">
+              <AvatarImage
+                src={getAvatar(user.picture, user.email!)}
+                alt={user.given_name ?? "User"}
+              />
+              <AvatarFallback className="rounded-lg text-sm font-semibold">
+                {user.given_name?.slice(0, 2).toUpperCase() ?? "U"}
               </AvatarFallback>
             </Avatar>
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{user.given_name}</span>
-              <span className="truncate text-xs">{user.email}</span>
+            <div className="flex flex-col space-y-0.5 flex-1 min-w-0">
+              <p className="text-sm font-medium truncate">
+                {user.given_name ?? "User"}
+              </p>
+              <p className="text-xs text-muted-foreground truncate">
+                {user.email}
+              </p>
             </div>
           </div>
         </DropdownMenuLabel>
+
         <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem asChild>
-            <PortalLink>
-              <BadgeCheck />
-              Account
+
+        <div className="p-1">
+          <DropdownMenuItem asChild className="cursor-pointer rounded-2xl">
+            <PortalLink className="flex items-center gap-2">
+              <Settings className="size-4" />
+              <span>Account Settings</span>
             </PortalLink>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <PortalLink>
-              <CreditCard />
-              Billing
+
+          <DropdownMenuItem asChild className="cursor-pointer rounded-lg">
+            <PortalLink className="flex items-center gap-2">
+              <CreditCard className="size-4" />
+              <span>Billing</span>
             </PortalLink>
           </DropdownMenuItem>
-        </DropdownMenuGroup>
+        </div>
+
         <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" asChild>
-          <LogoutLink>
-            <LogOut />
-            Log out
-          </LogoutLink>
-        </DropdownMenuItem>
+
+        <div className="p-1">
+          <DropdownMenuItem
+            asChild
+            className="cursor-pointer rounded-lg text-destructive focus:text-destructive focus:bg-destructive/10"
+          >
+            <LogoutLink className="flex items-center gap-2">
+              <LogOut className="size-4" />
+              <span>Log out</span>
+            </LogoutLink>
+          </DropdownMenuItem>
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

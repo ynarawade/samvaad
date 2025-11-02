@@ -1,5 +1,8 @@
 "use client";
-import { WorkspaceSchema } from "@/app/schemas/workspace";
+import {
+  WorkspaceSchema,
+  type WorkspaceSchemaType,
+} from "@/app/schemas/workspace";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,22 +26,50 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { orpc } from "@/lib/orpc";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 function CreateWrokspaceBtn() {
   const [isOpen, isSetOpen] = useState<boolean>(false);
+  const queryClient = useQueryClient();
   const form = useForm({
     resolver: zodResolver(WorkspaceSchema),
     defaultValues: {
       name: "",
     },
   });
-  function onSubmit() {
+  function onSubmit(value: WorkspaceSchemaType) {
     console.log("Hey Submitting the form");
+    createWorkspaceMutation.mutate(value);
   }
+
+  const createWorkspaceMutation = useMutation(
+    orpc.workspace.create.mutationOptions({
+      onSuccess: (newWorkspace) => {
+        // toast message
+        toast.success(
+          `Workspace ${newWorkspace.workspaceName} created successfully`
+        );
+        // revalidating data with tanstack
+        queryClient.invalidateQueries({
+          queryKey: orpc.workspace.list.queryKey(),
+        });
+
+        // closing dialog and reset form
+        form.reset();
+        isSetOpen(false);
+      },
+      onError: () => {
+        toast.error(`Failed to create workspace, try again!`);
+      },
+    })
+  );
+
   return (
     <Dialog open={isOpen} onOpenChange={isSetOpen}>
       <Tooltip>
@@ -81,7 +112,11 @@ function CreateWrokspaceBtn() {
                 </FormItem>
               )}
             ></FormField>
-            <Button type="submit">Create</Button>
+            <Button disabled={createWorkspaceMutation.isPending} type="submit">
+              {createWorkspaceMutation.isPending
+                ? "Creating..."
+                : "Create Wrokspace"}
+            </Button>
           </form>
         </Form>
       </DialogContent>
