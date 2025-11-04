@@ -24,7 +24,10 @@ export const standardWriteSecurityMiddleware = base
 
     if (decision.isDenied()) {
       if (decision.reason.isRateLimit()) {
-        throw errors.RATE_LIMITED();
+        throw errors.RATE_LIMITED({
+          message:
+            "You’re making changes too quickly. Please wait a moment before trying again.",
+        });
       }
       throw errors.FORBIDDEN({ message: "Request blocked!" });
     }
