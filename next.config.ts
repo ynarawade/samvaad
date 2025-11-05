@@ -5,20 +5,15 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "**",
-        port: "",
-        pathname: "**",
-      },
-      {
+        hostname: "avatars.githubusercontent.com",
         protocol: "https",
-        hostname: "**",
-        port: "",
-        pathname: "**",
       },
       {
-        hostname: "https://avatars.githubusercontent.com",
-        port: "",
+        hostname: "*.googleusercontent.com",
+        protocol: "https",
+      },
+      {
+        hostname: "avatar.vercel.sh",
         protocol: "https",
       },
     ],

@@ -12,7 +12,7 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { init, Organizations } from "@kinde/management-api-js";
 import z from "zod";
 
-export const workspaceList = base
+export const listWorkspace = base
   .use(requiredAuthMiddleware)
   .use(requiredWorkspaceMiddleware)
   .route({

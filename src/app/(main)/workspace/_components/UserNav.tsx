@@ -17,6 +17,7 @@ import {
 } from "@kinde-oss/kinde-auth-nextjs/components";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { CreditCard, LogOut, Settings } from "lucide-react";
+import Image from "next/image";
 
 function UserNav() {
   const {
@@ -32,9 +33,10 @@ function UserNav() {
           className="size-12 rounded-2xl hover:rounded-xl transition-all duration-300 hover:bg-accent"
         >
           <Avatar className="size-10 rounded-xl">
-            <AvatarImage
+            <Image
               src={getAvatar(user.picture, user.email!)}
               alt={user.given_name ?? "User"}
+              fill
               className="object-cover"
             />
             <AvatarFallback className="rounded-xl text-sm font-semibold">
